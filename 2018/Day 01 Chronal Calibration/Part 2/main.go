@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	file, err := os.Open("day-01-input.txt")
+	file, err := os.Open("../input.txt")
 	if err != nil {
 		log.Fatalf("could not read input data from file, err=%v", err)
 	}
