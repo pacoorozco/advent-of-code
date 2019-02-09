@@ -2,9 +2,9 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
-	"strconv"
 )
 
 func main() {
@@ -12,23 +12,45 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not read input data from file, err=%v", err)
 	}
-	defer file.Close()
-
-	var freq int
+	defer func() {
+		cerr := file.Close()
+		if err == nil {
+			err = cerr
+		}
+	}()
 
 	scanner := bufio.NewScanner(file)
+
+	countThree := 0
+	countFour := 0
+
 	for scanner.Scan() {
-		change, err := strconv.Atoi(scanner.Text())
-		if err != nil {
-			log.Fatalf("could not convert line to integer, err=%v", err)
+		m := make(map[rune] int)
+		line := scanner.Text()
+
+		for _, char := range line {
+			m[char] = m[char] + 1
 		}
-		freq += change
+
+		notThree := true
+		notFour := true
+
+		for _, count := range m {
+			if count == 2 && notThree {
+				notThree = false
+				countThree++
+			}
+			if count == 3 && notFour {
+				notFour = false
+				countFour++
+			}
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatalf("could not read line on frequencies, err=%v", err)
 	}
 
-	println(freq)
-
+	checksum := countFour * countThree
+	fmt.Println(checksum)
 }
